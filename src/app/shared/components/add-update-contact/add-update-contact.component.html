@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ contact ? 'Editar Contacto' : 'Agregar Contacto' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <ion-list>
+      <!-- Solo Campo Teléfono -->
+      <ion-item>
+        <ion-label position="floating">Teléfono</ion-label>
+        <ion-input
+          formControlName="phone"
+          type="tel"
+          inputmode="numeric"
+          placeholder="Ej: 987654321">
+        </ion-input>
+      </ion-item>
+      <ion-note *ngIf="phoneControl?.invalid && (phoneControl?.dirty || phoneControl?.touched)" color="danger">
+        <span *ngIf="phoneControl?.errors?.['required']">El teléfono es requerido</span>
+        <span *ngIf="phoneControl?.errors?.['minlength'] || phoneControl?.errors?.['maxlength']">
+          Debe tener 10 dígitos
+        </span>
+        <span *ngIf="phoneControl?.errors?.['pattern']">Solo números permitidos</span>
+      </ion-note>
+    </ion-list>
+
+    <!-- Botón de Submit -->
+    <ion-button
+      type="submit"
+      expand="block"
+      class="ion-margin-top"
+      [disabled]="form.invalid || isSubmitting">
+      <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+      <span *ngIf="!isSubmitting">
+        {{ contact ? 'Actualizar' : 'Agregar' }}
+      </span>
+    </ion-button>
+  </form>
+</ion-content>

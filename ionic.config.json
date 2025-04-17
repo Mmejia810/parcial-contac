@@ -1,0 +1,7 @@
+{
+  "name": "push-noti",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

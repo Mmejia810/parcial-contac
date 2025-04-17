@@ -1,0 +1,128 @@
+<ion-content>
+  <app-header backButton="/auth"></app-header>
+  <app-logo></app-logo>
+
+  <h2 class="ion-text-center ion-no-margin">Nuevo Usuario</h2>
+
+  <div class="content">
+    <div class="d-flex-center">
+      <form
+        (keyup.enter)="submit()"
+        (ngSubmit)="submit()"
+        class="ion-text-center"
+      >
+        <app-custom-input
+          autocomplete="name"
+          [control]="form.controls.name"
+          type="text"
+          label="Nombre:"
+          icon="person-outline"
+        ></app-custom-input>
+        <div
+          class="validators"
+          *ngIf="form.controls.name.errors && form.controls.name.dirty"
+        >
+          <div *ngIf="form.controls.name.errors?.['required']">
+            Ingresa Tu Nombre
+          </div>
+          <div *ngIf="form.controls.name.errors?.['minLength']">
+            Ingresa Un Nombre Valido
+          </div>
+        </div>
+
+        <app-custom-input
+          autocomplete="email"
+          [control]="form.controls.email"
+          type="email"
+          label="Correo:"
+          icon="mail-outline"
+        ></app-custom-input>
+        <div
+          class="validators"
+          *ngIf="form.controls.email.errors && form.controls.email.dirty"
+        >
+          <div *ngIf="form.controls.email.errors?.['required']">
+            Ingresa Tu Email
+          </div>
+          <div *ngIf="form.controls.email.errors?.['email']">
+            Ingresa Un Correo Valido
+          </div>
+        </div>
+
+        <app-custom-input
+        autocomplete="tel"
+          [control]="form.controls.phone"
+          type="tel"
+          label="Teléfono:"
+          icon="call-outline"
+        ></app-custom-input>
+
+        <div
+          class="validators"
+          *ngIf="form.controls.phone.errors && form.controls.phone.dirty"
+        >
+          <div *ngIf="form.controls.phone.errors?.['required']">
+            Ingresa Tu Número De Teléfono
+          </div>
+          <div *ngIf="form.controls.phone.errors?.['maxlength']">
+            El Número No Puede Tener Más De 10 Dígitos
+          </div>
+          <div *ngIf="form.controls.phone.errors?.['pattern']">
+            Solo Se Permiten Números
+          </div>
+        </div>
+
+        <app-custom-input
+          [control]="form.controls.password"
+          type="password"
+          label="contraseña:"
+          icon="lock-closed-outline"
+        ></app-custom-input>
+        <div
+          class="validators"
+          *ngIf="form.controls.password.errors && form.controls.password.dirty"
+        >
+          <div *ngIf="form.controls.password.errors?.['required']">
+            Ingresa Tu Contraseña
+          </div>
+          <div *ngIf="form.controls.password.errors?.['minlength']">
+            La Contraseña Debe Tener Al Menos 6 Caracteres
+          </div>
+        </div>
+
+        <app-custom-input
+          [control]="form.controls.confirmPassword"
+          type="password"
+          label="contraseña:"
+          icon="checkmark-circle-outline"
+        ></app-custom-input>
+        <div
+          class="validators"
+          *ngIf="form.controls.confirmPassword.errors && form.controls.confirmPassword.dirty"
+        >
+          <div *ngIf="form.controls.confirmPassword.errors?.['required']">
+            Ingresa tu contraseña
+          </div>
+          <div *ngIf="form.controls.confirmPassword.errors?.['minlength']">
+            La contraseña debe tener al menos 6 caracteres
+          </div>
+          <div *ngIf="form.controls.confirmPassword.errors?.['noMatch']">
+            La contraseña no coincide
+          </div>
+        </div>
+
+        <ion-button
+          class="ion-margin-vertical"
+          [disabled]="form.invalid"
+          type="submit"
+          shape="round"
+        >
+          Registrarme
+          <ion-icon slot="end" name="log-in-outline"></ion-icon>
+        </ion-button>
+
+
+      </form>
+    </div>
+  </div>
+</ion-content>

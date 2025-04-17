@@ -1,0 +1,12 @@
+:host {
+  ion-toolbar {
+    background: var(--ion-toolbar-background);
+    color: var(--ion-toolbar-color);
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  ion-icon {
+    color: var(--ion-icon-color);
+  }
+}
+

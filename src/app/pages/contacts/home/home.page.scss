@@ -1,0 +1,42 @@
+.contact-card {
+  border-radius: 16px;
+  background: var(--ion-card-background);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.contact-item {
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  align-items: center;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+ion-label h2 {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ion-text-color);
+  margin: 0;
+}
+
+ion-label p {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin-top: 4px;
+}

@@ -1,0 +1,88 @@
+/* 🌞 Modo Claro (Por defecto) */
+:root {
+  --ion-color-primary: #3880ff;
+  --ion-color-primary-rgb: 56, 128, 255;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-shade: #3171e0;
+  --ion-color-primary-tint: #4c8dff;
+
+  --ion-color-secondary: #3dc2ff;
+  --ion-color-tertiary: #5260ff;
+  --ion-color-success: #2dd36f;
+  --ion-color-warning: #ffc409;
+  --ion-color-danger: #eb445a;
+  --ion-color-dark: #222428;
+  --ion-color-medium: #92949c;
+  --ion-color-light: #f4f5f8;
+
+  --ion-background-color: #ffffff;
+  --ion-text-color: #1e1e1e;
+  --ion-toolbar-background: var(--ion-color-primary);
+  --ion-toolbar-color: var(--ion-color-primary-contrast);
+  --ion-item-background: #f9f9f9;
+  --ion-border-color: #e0e0e0;
+  --ion-card-background: #ffffff;
+  --ion-card-border-radius: 12px;
+  --ion-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+  --ion-button-border-radius: 10px;
+  --ion-button-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+  --transition-default: 0.3s ease-in-out;
+}
+
+/* 🌙 Modo Oscuro */
+[color-theme='dark'] {
+  --ion-color-primary: #1e90ff;
+  --ion-color-secondary: #00bcd4;
+  --ion-color-tertiary: #9b59b6;
+  --ion-color-success: #27ae60;
+  --ion-color-warning: #f1c40f;
+  --ion-color-danger: #e74c3c;
+  --ion-color-dark: #121212;
+  --ion-color-medium: #7f8c8d;
+  --ion-color-light: #2c3e50;
+
+  --ion-background-color: #121212;
+  --ion-text-color: #e0e0e0;
+  --ion-toolbar-background: #1e1e1e;
+  --ion-toolbar-color: #ffffff;
+  --ion-item-background: #1a1a1a;
+  --ion-border-color: #444;
+  --ion-card-background: #1e1e1e;
+  --ion-card-border-radius: 12px;
+  --ion-card-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+
+  --ion-button-box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
+}
+
+/* Estilos Material y iOS Dark */
+[color-theme='dark'].md,
+[color-theme='dark'].ios {
+  --mdc-theme-surface: var(--ion-background-color);
+  --mdc-theme-background: var(--ion-background-color);
+  --mdc-theme-on-surface: var(--ion-text-color);
+  --mdc-theme-primary: var(--ion-color-primary);
+  --mdc-theme-secondary: var(--ion-color-secondary);
+}
+
+/* 💬 ion-modal en modo oscuro */
+[color-theme='dark'] ion-modal {
+  --ion-background-color: #1e1e1e;
+  --ion-text-color: #e0e0e0;
+  --ion-toolbar-background: #252525;
+  --ion-toolbar-color: #fff;
+}
+
+/* 🌟 Animaciones suaves */
+* {
+  transition: background-color var(--transition-default),
+              color var(--transition-default),
+              box-shadow var(--transition-default);
+}
+
+/* Avatar border (opcional) */
+ion-avatar img {
+  border-radius: 50%;
+  border: 2px solid var(--ion-color-primary);
+}

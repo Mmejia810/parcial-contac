@@ -1,0 +1,59 @@
+<ion-content>
+  <app-header title="Contactos"></app-header>
+
+  <div class="content">
+    <ion-grid>
+      <ion-row>
+        <ion-col
+          *ngFor="let contact of contacts"
+          size="12"
+          size-sm="12"
+          size-md="6"
+          size-lg="6"
+        >
+          <ion-card mode="ios" class="contact-card">
+            <ion-item lines="none" class="contact-item">
+              <ion-avatar slot="start" class="avatar">
+                <img
+                  [src]="contact.avatarUrl ||
+                    'https://ui-avatars.com/api/?name=' +
+                    contact.name + '+'  + contact.phone +
+                    '&background=' + (contact.bgColor || '009688') +
+                    '&color=fff&rounded=true'"
+                />
+              </ion-avatar>
+              <ion-label>
+                <h2>{{ contact.name }}</h2>
+                <p>{{ contact.phone }}</p>
+              </ion-label>
+            </ion-item>
+
+            <!-- Botones fuera del ion-item -->
+            <ion-row class="ion-padding-horizontal ion-padding-bottom ion-justify-content-between">
+              <ion-col size="auto">
+                <ion-button  (click)="addOrUpdateContact(contact)" mode="ios" size="small" fill="outline" color="primary">
+                  <ion-icon slot="start" name="eye-outline"></ion-icon>
+                  Ver contacto
+                </ion-button>
+              </ion-col>
+              <ion-col size="auto">
+                <ion-button mode="ios" size="small" fill="outline" color="danger">
+                  <ion-icon slot="start" name="trash-outline"></ion-icon>
+                  Eliminar
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+ <!-- Botón flotante para añadir contacto -->
+ <ion-fab (click)="addOrUpdateContact()" vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button color="primary" mode="ios">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+</ion-content>
