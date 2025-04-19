@@ -18,6 +18,10 @@ const routes: Routes = [
     path: 'contacts',
     loadChildren: () => import('./pages/contacts/contacts.module').then( m => m.ContactsPageModule), canActivate: [AuthGuard]
   },
+  {
+    path: 'recibir-llamada',
+    loadChildren: () => import('./pages/recibir-llamada/recibir-llamada.module').then( m => m.RecibirLlamadaPageModule)
+  },
 
 ];
 
