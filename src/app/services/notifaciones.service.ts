@@ -77,7 +77,7 @@ export class NotifacionesService {
       if (meetingId && callerName) {
         console.log('📲 Volviendo a pantalla de llamada entrante');
 
-        this.navCtrl.navigateForward(['/incoming-call'], {
+        this.navCtrl.navigateForward(['/recibir-llamada'], {
           state: {
             meetingId: meetingId,
             callerName: callerName

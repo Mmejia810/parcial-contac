@@ -53,18 +53,29 @@ export class FirebaseService {
           await sendEmailVerification(cred.user); // Enviar verificación
         }
 
+        const tokenFCM = localStorage.getItem('fcm'); // <-- OBTENER TOKEN
+
         const newUser = {
           name: user.name,
           email: user.email,
           phone: user.phone,
-          uid: cred.user.uid
+          uid: cred.user.uid,
+          token: tokenFCM ?? null // <-- AGREGAR TOKEN AL USUARIO
         };
 
         console.log(newUser);
 
-        return this.usuarioSvc.addUsuario(newUser);
+        await this.usuarioSvc.addUsuario(newUser);
+
+        if (tokenFCM) {
+          localStorage.removeItem('fcm'); // <-- LIMPIAR TOKEN DEL LOCALSTORAGE
+        }
+
+        return true;
       });
   }
+
+
 
   updateUser(user: Partial<{ displayName: string; photoURL: string }>) {
     if (this.auth.currentUser) {

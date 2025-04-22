@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-recibir-llamada',
@@ -10,12 +11,21 @@ import { Capacitor } from '@capacitor/core';
 export class RecibirLlamadaPage implements OnInit {
 
   meetingId: string = '';
-  callerName: string='';
+  callerName: string = '';
 
-  constructor() { }
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras.state;
 
+    if (state) {
+      this.meetingId = state['meetingId'] || '';
+      this.callerName = state['callerName'] || '';
+      console.log('📞 Datos de la llamada:', this.meetingId, this.callerName);
+    } else {
+      console.warn('❌ No hay datos de llamada en el estado de navegación');
+    }
   }
 
   async acceptCall() {
@@ -32,7 +42,6 @@ export class RecibirLlamadaPage implements OnInit {
       });
     } catch (error) {
       console.error('❌ Error al lanzar la llamada:', error);
-}
-}
-
+    }
+  }
 }
