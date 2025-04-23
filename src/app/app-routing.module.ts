@@ -7,7 +7,7 @@ const routes: Routes = [
 
   {
     path: '',
-    redirectTo: 'auth',
+    redirectTo: 'intro',
     pathMatch: 'full'
   },
   {
@@ -22,6 +22,11 @@ const routes: Routes = [
     path: 'recibir-llamada',
     loadChildren: () => import('./pages/recibir-llamada/recibir-llamada.module').then( m => m.RecibirLlamadaPageModule)
   },
+  {
+    path: 'intro',
+    loadChildren: () => import('./pages/intro/intro.module').then( m => m.IntroPageModule)
+  },
+
 
 ];
 
