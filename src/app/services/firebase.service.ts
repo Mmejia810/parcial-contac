@@ -17,13 +17,15 @@ import {
   updateDoc,
   query,
   where,
-  getDocs
+  getDocs,
+  deleteDoc
 } from '@angular/fire/firestore';
 
 import { User } from '../models/user.model';
 import { UtilsService } from './utils.service';
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
+import { Observable, from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +36,8 @@ export class FirebaseService {
     private db: Firestore,
     private utilsSvc: UtilsService,
     private router: Router,
-    private usuarioSvc: UserService
+    private usuarioSvc: UserService,
+    private firestore: Firestore
   ) {}
 
   login(user: User) {
@@ -112,4 +115,9 @@ export class FirebaseService {
     const userDoc = snapshot.docs[0];
     return { id: userDoc.id, ...userDoc.data() };
   }
+    // Método para eliminar un documento en Firestore
+    deleteDocument(path: string): Observable<void> {
+      const docRef = doc(this.firestore, path); // Creamos la referencia del documento
+      return from(deleteDoc(docRef)); // Eliminamos el documento
+    }
 }

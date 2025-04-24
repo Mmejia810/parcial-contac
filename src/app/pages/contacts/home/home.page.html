@@ -37,9 +37,15 @@
                 </ion-button>
               </ion-col>
               <ion-col size="auto">
-                <ion-button mode="ios" size="small" fill="outline" color="danger">
+                <ion-button (click)="deleteContact(contact)" mode="ios" size="small" fill="outline" color="danger">
                   <ion-icon slot="start" name="trash-outline"></ion-icon>
                   Eliminar
+                </ion-button>
+              </ion-col>
+              <ion-col size="auto">
+                <ion-button (click)="startVideoCall(contact)" mode="ios" size="small" fill="outline" color="success">
+                  <ion-icon slot="start" name="videocam-outline"></ion-icon>
+                  Llamar
                 </ion-button>
               </ion-col>
             </ion-row>
@@ -49,11 +55,10 @@
     </ion-grid>
   </div>
 
- <!-- Botón flotante para añadir contacto -->
- <ion-fab (click)="addOrUpdateContact()" vertical="bottom" horizontal="end" slot="fixed">
-  <ion-fab-button color="primary" mode="ios">
-    <ion-icon name="add"></ion-icon>
-  </ion-fab-button>
-</ion-fab>
-
+  <!-- Botón flotante para añadir contacto -->
+  <ion-fab (click)="addOrUpdateContact()" vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" mode="ios">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
