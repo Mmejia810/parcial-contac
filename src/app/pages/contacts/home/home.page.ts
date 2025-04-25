@@ -68,12 +68,26 @@ export class HomePage implements OnInit {
   }
 
   startVideoCall(contact: contacts) {
-    const meetingId = `call_${contact.phone}`; // O cualquier ID único
-    const callerName = contact.name;
+    const meetingId = `call_${contact.phone}_${Date.now()}`;
+    const callerName = this.utilsScv.getElementFromLocalstorage('user')?.name || 'Desconocido';
 
+    // 1. Enviar la notificación push al contacto
+    if (contact.token) {
+      this.firebaseSvc.sendCallNotification(contact.token, meetingId, callerName)
+        .then(() => {
+          console.log('📤 Notificación de videollamada enviada');
+        })
+        .catch((err) => {
+          console.error('❌ Error al enviar notificación:', err);
+        });
+    } else {
+      console.warn('⚠️ El contacto no tiene un token de notificación');
+    }
+
+    // 2. Iniciar la llamada en el lado del llamador
     if (Capacitor.getPlatform() === 'android') {
       try {
-        console.log('🚀 Iniciando llamada con:', meetingId, callerName);
+        console.log('🚀 Iniciando llamada (Android)...', meetingId, callerName);
         (window as any).Capacitor.Plugins.ExamplePlugin.startCall({
           meetingId,
           userName: callerName
@@ -86,6 +100,7 @@ export class HomePage implements OnInit {
       window.open(url, '_blank');
     }
   }
+
   // Método para eliminar un contacto con confirmación de alerta
   async deleteContact(contact: contacts) {
     const alert = await this.alertController.create({

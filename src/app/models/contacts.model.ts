@@ -4,5 +4,6 @@ export interface contacts {
   phone : string;
   avatarUrl?: string;
   bgColor?: string;
+  token?: string;
 
 }

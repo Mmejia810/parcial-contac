@@ -96,7 +96,9 @@ export class ContacService {
     if (!contacto?.phone || contacto.phone.length !== 10) {
       throw new Error('El teléfono debe tener 10 dígitos');
     }
-    if (!contacto.name || contacto.name.trim().length < 2) {
+    // Solo validamos el nombre si se está creando desde un formulario manual
+    // y el nombre no viene desde Firebase
+    if (contacto.name !== undefined && contacto.name.trim().length < 2) {
       throw new Error('El nombre debe tener al menos 2 caracteres');
     }
   }

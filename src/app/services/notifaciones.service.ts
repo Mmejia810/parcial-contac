@@ -1,89 +1,77 @@
-import { FirebaseService } from './firebase.service';
 import { Injectable } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
-import { doc, Firestore, updateDoc } from '@angular/fire/firestore';
+import { FirebaseMessaging } from '@capacitor-firebase/messaging';
+import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
-import { PushNotifications } from '@capacitor/push-notifications';
-import { NavController } from '@ionic/angular';
-import { LocalNotifications } from '@capacitor/local-notifications';
+import { FirebaseService } from './firebase.service';
+import { Firestore, updateDoc, doc } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { ToastController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotifacionesService {
-
-
-
   constructor(
-    private firestore: Firestore,
-    private auth: Auth,
-    private navCtrl: NavController,
-    private FirebaseService: FirebaseService
+    private router: Router,
+    private firebaseSvc: FirebaseService,
+    private toastController: ToastController
   ) {}
 
-  async initPush() {
-    if (Capacitor.getPlatform() === 'web') {
-      console.warn('PushNotifications no está implementado en web.');
-      return;
-    }
-    console.log('inicinando notificacion');
-    const permStatus = await PushNotifications.checkPermissions();
-    if (permStatus.receive !== 'granted') {
-      await PushNotifications.requestPermissions();
-    }
+  async initializePushNotifications() {
+    try {
+      const permStatus = await FirebaseMessaging.requestPermissions();
+      console.log('📱 Permisos de notificaciones:', permStatus);
 
-    await PushNotifications.register();
+      const { token } = await FirebaseMessaging.getToken();
+      if (token) {
+        localStorage.setItem('fcm', token);
+        console.log('📲 Token FCM guardado:', token);
 
-    await PushNotifications.addListener('registration', async (token) => {
-      console.log('📲 Token FCM recibido:', token.value);
-      const user = this.auth.currentUser;
-      if (user) {
-        const userRef = doc(this.firestore, `users/${user.uid}`);
-        await updateDoc(userRef, {token: token.value});
-      } else {
-        localStorage.setItem('fcm', token.value);
-      }
-    });
-
-    await PushNotifications.addListener('registrationError', (err) => {
-      console.error('❌ Error de registro FCM:', err);
-    });
-
-    await PushNotifications.addListener('pushNotificationReceived', (notification) => {
-      console.log('🔔 Notificación recibida:', JSON.stringify(notification));
-
-      const meetingId = notification.data?.meetingId;
-      const name = notification.data?.name;
-      const user = this.auth.currentUser;
-      console.log("user of fcm : " + JSON.stringify(user))
-      if (user != null) {
-        if (meetingId && name) {
-          this.navCtrl.navigateForward(['/recibir-llamada'], {
-            state: {
-              meetingId: meetingId,
-              callerName: name
-            }
-          });
-        }
-      }
-    });
-
-    await LocalNotifications.addListener('localNotificationActionPerformed', (event) => {
-      console.log('➡ Acción en notificación local:', event);
-
-      const meetingId = event.notification?.extra?.meetingId;
-      const callerName = event.notification?.extra?.callerName;
-
-      if (meetingId && callerName) {
-        console.log('📲 Volviendo a pantalla de llamada entrante');
-
-        this.navCtrl.navigateForward(['/recibir-llamada'], {
-          state: {
-            meetingId: meetingId,
-            callerName: callerName
+        const auth = getAuth();
+        onAuthStateChanged(auth, async user => {
+          if (user) {
+            const db = this.firebaseSvc['db']; // acceder a Firestore
+            const userDoc = doc(db, 'users', user.uid);
+            await updateDoc(userDoc, { token });
+            console.log('✅ Token FCM actualizado en Firestore');
           }
         });
-   }
-});
-}
+      }
+
+      await FirebaseMessaging.addListener('notificationReceived', async (notification: any) => {
+        console.log('📩 Notificación recibida en segundo plano:', notification);
+
+        // Redirigir automáticamente si contiene meetingId
+        if (notification?.data?.meetingId) {
+          localStorage.setItem('incoming-call', JSON.stringify(notification.data));
+          this.router.navigate(['/recibir-llamada']);
+        } else {
+          this.presentToast(notification?.notification?.title || 'Nueva notificación');
+        }
+      });
+
+      await FirebaseMessaging.addListener('notificationActionPerformed', async (notification: any) => {
+        console.log('📨 Acción en notificación:', notification);
+
+        const data = notification?.notification?.data;
+
+        if (data?.meetingId) {
+          localStorage.setItem('incoming-call', JSON.stringify(data));
+          this.router.navigate(['/recibir-llamada']);
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Error al inicializar notificaciones push:', error);
+    }
+  }
+
+  private async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'top',
+    });
+    await toast.present();
+  }
 }

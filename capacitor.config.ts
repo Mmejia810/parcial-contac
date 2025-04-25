@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.notipush.mauro',
-  appName: 'push-noti',
+  appId: 'com.example.app',
+  appName: 'npx cap init',
   webDir: 'www'
 };
 

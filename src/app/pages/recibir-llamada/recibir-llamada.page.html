@@ -1,13 +1,34 @@
 <ion-content>
-  <div class="call-container">
+  <div *ngIf="!showCall" class="call-container">
     <div class="profile-pic"></div>
-    <div class="caller-name">Mamá 💖</div>
+    <div class="caller-name">{{ callerName || 'Contacto' }}</div>
     <div class="status">Llamada entrante...</div>
     <div class="buttons">
-      <div class="btn reject">❌</div>
-      <div class="btn accept"><ion-button (click)="acceptCall()" expand="block" fill="clear" shape="round">
-        Click me
-      </ion-button></div>
+      <div class="btn reject">
+        <ion-button (click)="rejectCall()" expand="block" fill="clear" shape="round" color="danger">
+          Cancelar
+        </ion-button>
+      </div>
+      <div class="btn accept">
+        <ion-button (click)="acceptCall()" expand="block" fill="clear" shape="round" color="success">
+          Contestar
+        </ion-button>
+      </div>
     </div>
+  </div>
+
+  <div *ngIf="showCall" class="jitsi-wrapper">
+    <iframe
+      [src]="'https://jitsi1.geeksec.de/' + meetingId"
+      allow="camera; microphone; fullscreen; display-capture"
+      allowfullscreen
+      frameborder="0"
+      width="100%"
+      height="100%"
+    ></iframe>
+
+    <ion-button (click)="endCall()" expand="block" color="danger" class="hangup-button">
+      Colgar llamada
+    </ion-button>
   </div>
 </ion-content>

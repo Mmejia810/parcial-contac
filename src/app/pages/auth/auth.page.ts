@@ -36,9 +36,21 @@ export class AuthPage implements OnInit {
           phone: res.user.phoneNumber
         };
 
+        try {
+          // ⬇️ Llamar a la API externa para obtener el JWT
+          await this.firebaseSvc.loginToNotificationApi(user.email!, this.form.value.password!);
+        } catch (error) {
+          console.warn('⚠️ Error al autenticar con la API externa:', error);
+          // Podrías decidir si continuar o no aquí dependiendo de si el token es crítico
+        }
+
+        // Guardar usuario en localStorage
         this.utilsSvc.setElementInLocalstorage('user', user);
+
+        // Navegar al home
         this.utilsSvc.routerLink('/contacts/home');
 
+        // Finalizar loading y mostrar mensaje de bienvenida
         this.utilsSvc.dismissLoading();
         this.utilsSvc.presentToast({
           message: `Te damos la bienvenida ${user.name}`,
@@ -60,4 +72,5 @@ export class AuthPage implements OnInit {
       });
     }
   }
+
 }

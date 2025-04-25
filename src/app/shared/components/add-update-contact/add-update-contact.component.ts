@@ -76,14 +76,15 @@ export class AddUpdateContactComponent implements OnInit {
       const contactData: contacts = {
         id: this.form.value.id || '',
         phone: phone,
-        name: userFound.name // ← lo traes desde la base de datos
+        name: userFound.name,           // ← Nombre del usuario encontrado
+        token: userFound.token ?? null  // ← Token del usuario encontrado
       };
 
       if (contactData.id) {
         await this.contacService.updateContact(
           contactData.id,
           this.user.uid,
-          { phone: contactData.phone, name: contactData.name }
+          { phone: contactData.phone, name: contactData.name, token: contactData.token }
         );
         await this.showToast(this.MESSAGES.CONTACT_UPDATED, 'success');
       } else {

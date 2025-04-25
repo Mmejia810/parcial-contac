@@ -9,6 +9,7 @@ import {
 import { Platform } from '@ionic/angular';
 import { ThemeService } from './services/theme.service';
 import { NotifacionesService } from './services/notifaciones.service';
+import { PushService } from './services/push.service';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,8 @@ export class AppComponent {
   constructor(
     private platform: Platform,
     private themeSvc: ThemeService,
-    private notificationService: NotifacionesService) {
+    private notificationService: NotifacionesService,
+    private pushService: PushService) {
       this.initializeApp();
     }
 

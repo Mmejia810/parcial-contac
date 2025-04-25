@@ -9,6 +9,9 @@ import { AppRoutingModule } from './app-routing.module';
 
 // firebase
 import { CoreModule } from './core/core.module';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptor } from './core/interceptors/http.interceptor';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -18,11 +21,18 @@ import { CoreModule } from './core/core.module';
      IonicModule.forRoot(),
       AppRoutingModule,
     CoreModule,
+    HttpClientModule,
 
 
 
     ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

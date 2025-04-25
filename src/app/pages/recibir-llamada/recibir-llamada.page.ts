@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { Router } from '@angular/router';
+import { FirebaseService } from 'src/app/services/firebase.service';
 
 @Component({
   selector: 'app-recibir-llamada',
@@ -9,13 +10,14 @@ import { Router } from '@angular/router';
   standalone: false
 })
 export class RecibirLlamadaPage implements OnInit {
-
   meetingId: string = '';
   callerName: string = '';
+  showCall: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private firebaseSvc: FirebaseService) {}
 
   ngOnInit(): void {
+    // Obtener los datos pasados por la navegación
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras.state;
 
@@ -28,20 +30,43 @@ export class RecibirLlamadaPage implements OnInit {
     }
   }
 
+  // Método para aceptar la llamada
   async acceptCall() {
-    if (Capacitor.getPlatform() !== 'android') {
-      console.warn('Esta función solo está disponible en Android.');
+    if (!this.meetingId || !this.callerName) {
+      console.warn('⚠️ No se puede iniciar la llamada sin un meetingId o callerName');
       return;
     }
 
-    try {
-      console.log('🚀 Aceptando llamada:', this.meetingId, this.callerName);
-      await (window as any).Capacitor.Plugins.ExamplePlugin.startCall({
-        meetingId: this.meetingId,
-        userName: this.callerName
-      });
-    } catch (error) {
-      console.error('❌ Error al lanzar la llamada:', error);
+    if (Capacitor.getPlatform() === 'android') {
+      try {
+        console.log('📞 Iniciando videollamada en Android...');
+        // Llamada al plugin personalizado para iniciar la llamada
+        await (window as any).Capacitor.Plugins.ExamplePlugin.startCall({
+          meetingId: this.meetingId,
+          userName: this.callerName
+        });
+      } catch (error) {
+        console.error('❌ Error al iniciar la llamada con el plugin:', error);
+      }
+    } else {
+      console.log('🌐 Plataforma web, abriendo Jitsi en iframe');
+      // Mostrar el iframe con Jitsi para la llamada web
+      this.showCall = true;
     }
+  }
+
+  // Método para finalizar la llamada
+  endCall() {
+    console.log('📞 Terminando la llamada');
+    this.showCall = false;
+    // Navegar a la página de inicio
+    this.router.navigate(['/home']);
+  }
+
+  // Método para rechazar la llamada
+  rejectCall() {
+    console.log('❌ Llamada cancelada por el usuario');
+    // Navegar a la página de inicio si se rechaza la llamada
+    this.router.navigate(['/home']);
   }
 }
