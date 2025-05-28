@@ -27,7 +27,9 @@ export class AppComponent {
     }
 
   async initializeApp() {
-    await this.notificationService.initPush();
+   // En app.component.ts, cambia a:
+await this.notificationService.initializePushNotifications();
+
 
     this.themeSvc.setInitialTheme();
 

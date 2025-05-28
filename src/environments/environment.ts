@@ -4,6 +4,11 @@
 
 export const environment = {
   production: false,
+
+   supabase: {
+    url: 'https://vkkhgwadkcyqatqlsstn.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZra2hnd2Fka2N5cWF0cWxzc3RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNzE1MTYsImV4cCI6MjA2Mzk0NzUxNn0.qMInRyEXCAMwdbKfBmh0hTCy2RTbjgNy26B4YPKyCFk'  // reemplaza aquí con tu anon key
+  },
   firebaseConfig:{
     apiKey: "AIzaSyAFo-es0dXZDgiUmeLF1X-RbXjdttTAp0g",
     authDomain: "pushnoti-b78a7.firebaseapp.com",
@@ -12,6 +17,7 @@ export const environment = {
     messagingSenderId: "1050286023399",
     appId: "1:1050286023399:web:462cf1f32dfea3c227f842"
   }
+
 };
 
 

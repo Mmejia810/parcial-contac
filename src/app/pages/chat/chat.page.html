@@ -1,0 +1,79 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ contactName }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="callContact()">
+        <ion-icon slot="icon-only" name="call"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let msg of messages">
+      <ion-avatar slot="start">
+        <ion-icon [name]="msg.from === currentUserId ? 'person-circle' : 'person'" size="large"></ion-icon>
+      </ion-avatar>
+
+      <ion-label [class.own-message]="msg.from === currentUserId">
+        <ng-container [ngSwitch]="msg.type">
+          <div *ngSwitchCase="'text'">
+            <p>{{ msg.text }}</p>
+          </div>
+
+          <div *ngSwitchCase="'image'">
+            <img [src]="msg.mediaUrl" alt="Imagen" style="max-width: 100%; border-radius: 10px;" />
+          </div>
+
+          <div *ngSwitchCase="'audio'">
+            <audio controls [src]="msg.mediaUrl"></audio>
+          </div>
+
+          <div *ngSwitchCase="'file'">
+            <a [href]="msg.mediaUrl" target="_blank" download>📎 Ver archivo</a>
+          </div>
+
+          <div *ngSwitchCase="'location'">
+            <a [href]="'https://maps.google.com/?q=' + msg.location.lat + ',' + msg.location.lng" target="_blank">
+              📍 Ver ubicación en mapa
+            </a>
+          </div>
+
+          <div *ngSwitchDefault>
+            Mensaje desconocido
+          </div>
+        </ng-container>
+
+        <small>{{ msg.createdAt?.toDate?.() | date: 'short' }}</small>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="sendImage()">
+        <ion-icon slot="icon-only" name="image"></ion-icon>
+      </ion-button>
+      <ion-button (click)="sendAudio()">
+        <ion-icon slot="icon-only" name="mic"></ion-icon>
+      </ion-button>
+      <ion-button (click)="sendLocation()">
+        <ion-icon slot="icon-only" name="locate"></ion-icon>
+      </ion-button>
+      <ion-button (click)="sendFile()">
+        <ion-icon slot="icon-only" name="attach"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..."></ion-input>
+    <ion-buttons slot="end">
+      <ion-button (click)="sendMessage()">Enviar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- input oculto para seleccionar imagen -->
+  <input #imageInput type="file" accept="image/*" hidden (change)="onImageSelected($event)" />
+</ion-footer>

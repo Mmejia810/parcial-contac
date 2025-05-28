@@ -9,36 +9,28 @@ import {
   User as FirebaseUser,
   sendEmailVerification
 } from '@angular/fire/auth';
-import {
-  Firestore,
-  collection,
-  doc,
-  updateDoc,
-  query,
-  where,
-  getDocs,
-  deleteDoc,
-  setDoc,
-  getFirestore
-} from 'firebase/firestore';
+
 import { User } from '../models/user.model';
 import { UtilsService } from './utils.service';
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
 import { Observable, from } from 'rxjs';
-import { collectionData } from '@angular/fire/firestore';
+import { collection, collectionData, deleteDoc, doc, Firestore, getDocs, query, setDoc, where } from '@angular/fire/firestore';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService {
-  private db = getFirestore(); // Correctamente inicializamos Firestore
+
 
   constructor(
     private auth: Auth,
     private utilsSvc: UtilsService,
     private router: Router,
-    private usuarioSvc: UserService
+    private usuarioSvc: UserService,
+    private http: HttpClient,
+    private db: Firestore
   ) {}
 
   // Iniciar sesión
@@ -51,18 +43,18 @@ export class FirebaseService {
     });
   }
 
-  // Registrar un nuevo usuario
+  // Registrar nuevo usuario con envío de verificación y token FCM
   signUp(user: User) {
     return createUserWithEmailAndPassword(this.auth, user.email, user.password)
       .then(async cred => {
         if (cred.user) {
-          await sendEmailVerification(cred.user); // Enviar verificación
+          await sendEmailVerification(cred.user);
         }
 
         let tokenFCM = localStorage.getItem('fcm');
 
         if (!tokenFCM) {
-          await new Promise(resolve => setTimeout(resolve, 1000)); // Esperar 1 segundo
+          await new Promise(resolve => setTimeout(resolve, 1000));
           tokenFCM = localStorage.getItem('fcm');
         }
 
@@ -80,15 +72,13 @@ export class FirebaseService {
 
         await setDoc(doc(this.db, 'users', cred.user.uid), newUser);
 
-        if (tokenFCM) {
-          localStorage.removeItem('fcm');
-        }
+        localStorage.removeItem('fcm');
 
         return true;
       });
   }
 
-  // Actualizar perfil del usuario
+  // Actualizar perfil
   updateUser(user: Partial<{ displayName: string; photoURL: string }>) {
     if (this.auth.currentUser) {
       return updateProfile(this.auth.currentUser, user);
@@ -97,27 +87,41 @@ export class FirebaseService {
     }
   }
 
-  // Obtener estado de autenticación
+  // Obtener estado de autenticación (Promise)
   getAuthState() {
     return new Promise<FirebaseUser | null>((resolve) => {
       onAuthStateChanged(this.auth, resolve);
     });
   }
 
-  // Cerrar sesión
+  // Obtener usuario autenticado (Promise)
+  async getUser(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(this.auth, user => {
+        unsubscribe();
+        if (user) {
+          resolve(user);
+        } else {
+          reject('No hay usuario autenticado');
+        }
+      });
+    });
+  }
+
+  // Cerrar sesión y limpiar localStorage
   async signOut() {
     await signOut(this.auth);
     this.utilsSvc.routerLink('/auth');
     localStorage.removeItem('user');
   }
 
-  // Obtener subcolección de Firestore
+  // Obtener subcolección de Firestore como Observable
   getSubcollection(pathToSubcollection: string): Observable<any> {
-    const subColRef = collection(this.db, pathToSubcollection); // Correcto: Obtiene una subcolección
+    const subColRef = collection(this.db, pathToSubcollection);
     return collectionData(subColRef, { idField: 'id' });
   }
 
-  // Obtener usuario por teléfono
+  // Buscar usuario por teléfono
   async getUserByPhone(phone: string): Promise<any | null> {
     const usersRef = collection(this.db, 'users');
     const q = query(usersRef, where('phone', '==', phone));
@@ -129,30 +133,23 @@ export class FirebaseService {
     return { id: userDoc.id, ...userDoc.data() };
   }
 
-  // Método para eliminar un documento en Firestore
+  // Eliminar documento Firestore
   deleteDocument(path: string) {
-    const docRef = doc(this.db, path); // Correcto: Creación de referencia de documento
-    return from(deleteDoc(docRef)); // Deletar el documento
+    const docRef = doc(this.db, path);
+    return from(deleteDoc(docRef));
   }
 
-  // Enviar notificación de llamada
+  // Enviar notificación de llamada a API externa
   sendCallNotification(token: string, meetingId: string, callerName: string) {
-    const body = {
-      token,
-      meetingId,
-      callerName
-    };
-
-    return this.sendNotificationToServer(body); // Llamada a una función externa
+    const body = { token, meetingId, callerName };
+    return this.sendNotificationToServer(body);
   }
 
-  // Método para enviar la notificación utilizando un servidor externo con token de autenticación
+  // Enviar notificación a servidor externo con token JWT
   private async sendNotificationToServer(body: any) {
     try {
       const tokenAuth = localStorage.getItem('token');
-      if (!tokenAuth) {
-        throw new Error('Token JWT no encontrado en localStorage');
-      }
+      if (!tokenAuth) throw new Error('Token JWT no encontrado en localStorage');
 
       const response = await fetch('https://ravishing-courtesy-production.up.railway.app/notifications', {
         method: 'POST',
@@ -174,14 +171,12 @@ export class FirebaseService {
     }
   }
 
-  // Método para autenticar con la API externa y obtener el JWT
+  // Login a API externa para obtener JWT
   async loginToNotificationApi(email: string, password: string) {
     try {
       const response = await fetch('https://ravishing-courtesy-production.up.railway.app/user/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
@@ -191,11 +186,38 @@ export class FirebaseService {
       }
 
       const data = await response.json();
-      localStorage.setItem('token', data.token); // Guardar el token JWT
+      localStorage.setItem('token', data.token);
       console.log('🔐 Token guardado:', data.token);
     } catch (error) {
       console.error('❌ Error en loginToNotificationApi:', error);
       throw error;
+    }
+  }
+
+  // Otra forma de obtener el usuario actual (Promise)
+  async getCurrentUser(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(this.auth, user => {
+        unsubscribe();
+        if (user) resolve(user);
+        else reject('No user logged in');
+      });
+    });
+  }
+
+  // Enviar notificación push usando HttpClient y API externa
+  async sendPushNotification(token: string, title: string, body: string, data: any = {}) {
+    const payload = { token, title, body, data };
+
+    try {
+      const response = await this.http.post(
+        'https://ravishing-courtesy-production.up.railway.app/send',
+        payload
+      ).toPromise();
+
+      console.log('📤 Notificación enviada con éxito', response);
+    } catch (err) {
+      console.error('❌ Error al enviar notificación:', err);
     }
   }
 }

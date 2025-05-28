@@ -26,6 +26,12 @@ const routes: Routes = [
     path: 'intro',
     loadChildren: () => import('./pages/intro/intro.module').then( m => m.IntroPageModule)
   },
+ {
+    path: 'chat/:contactId/:contactName',
+  loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatPageModule),
+  canActivate: [AuthGuard]
+}
+,
 
 
 ];

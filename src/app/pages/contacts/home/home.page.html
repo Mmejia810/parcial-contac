@@ -17,7 +17,7 @@
                 <img
                   [src]="contact.avatarUrl ||
                     'https://ui-avatars.com/api/?name=' +
-                    contact.name + '+'  + contact.phone +
+                    contact.name + '+' + contact.phone +
                     '&background=' + (contact.bgColor || '009688') +
                     '&color=fff&rounded=true'"
                 />
@@ -28,10 +28,10 @@
               </ion-label>
             </ion-item>
 
-            <!-- Botones fuera del ion-item -->
+            <!-- Botones de acción -->
             <ion-row class="ion-padding-horizontal ion-padding-bottom ion-justify-content-between">
               <ion-col size="auto">
-                <ion-button  (click)="addOrUpdateContact(contact)" mode="ios" size="small" fill="outline" color="primary">
+                <ion-button (click)="addOrUpdateContact(contact)" mode="ios" size="small" fill="outline" color="primary">
                   <ion-icon slot="start" name="eye-outline"></ion-icon>
                   Ver contacto
                 </ion-button>
@@ -47,6 +47,13 @@
                   <ion-icon slot="start" name="videocam-outline"></ion-icon>
                   Llamar
                 </ion-button>
+              </ion-col>
+              <ion-col size="auto">
+                <ion-button [routerLink]="['/chat', contact.id, contact.name]" mode="ios" size="small" fill="outline" color="tertiary">
+  <ion-icon slot="start" name="chatbubble-ellipses-outline"></ion-icon>
+  Chatear
+</ion-button>
+
               </ion-col>
             </ion-row>
           </ion-card>
